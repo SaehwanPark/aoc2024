@@ -1,3 +1,6 @@
+![Current Advent Calendar](image.png)
+(Current status as of 26 July 2025...)
+
 # Advent of Code 2024 Solutions
 
 Rust solutions for [Advent of Code 2024](https://adventofcode.com/2024), featuring my own approaches and algorithms.
