@@ -43,7 +43,7 @@ fn parse_input(content: &str) -> Result<(Vec<i32>, Vec<i32>), Box<dyn std::error
 
     let parts: Vec<&str> = line.split_whitespace().collect();
     if parts.len() != 2 {
-      return Err(format!("Invalid line format: {}", line).into());
+      return Err(format!("Invalid line format: {line}").into());
     }
 
     let left: i32 = parts[0].parse()?;
