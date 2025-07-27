@@ -38,7 +38,7 @@ impl Equation {
 
   fn can_be_solved_with_operators(&self, available_operators: &[Operator]) -> bool {
     if self.numbers.len() < 2 {
-      return self.numbers.get(0) == Some(&self.test_value);
+      return self.numbers.first() == Some(&self.test_value);
     }
 
     let operator_count = self.numbers.len() - 1;
@@ -104,11 +104,11 @@ fn main() {
     fs::read_to_string("input/day07_simple.txt").expect("Failed to read simple input file");
 
   let simple_result_part1 = solve_part1(&simple_input);
-  println!("Part 1 (simple): {}", simple_result_part1);
+  println!("Part 1 (simple): {simple_result_part1}");
   assert_eq!(simple_result_part1, 3749);
 
   let simple_result_part2 = solve_part2(&simple_input);
-  println!("Part 2 (simple): {}", simple_result_part2);
+  println!("Part 2 (simple): {simple_result_part2}");
   assert_eq!(simple_result_part2, 11387);
 
   // Solve with full input
@@ -116,8 +116,8 @@ fn main() {
     fs::read_to_string("input/day07_full.txt").expect("Failed to read full input file");
 
   let full_result_part1 = solve_part1(&full_input);
-  println!("Part 1 (full): {}", full_result_part1);
+  println!("Part 1 (full): {full_result_part1}");
 
   let full_result_part2 = solve_part2(&full_input);
-  println!("Part 2 (full): {}", full_result_part2);
+  println!("Part 2 (full): {full_result_part2}");
 }

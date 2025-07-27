@@ -233,15 +233,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   let simple_input = fs::read_to_string("input/day06_simple.txt")?;
   let simple_result_part1 = solve_part1(&simple_input)?;
   let simple_result_part2 = solve_part2(&simple_input)?;
-  println!("Simple input Part 1: {}", simple_result_part1);
-  println!("Simple input Part 2: {}", simple_result_part2);
+  println!("Simple input Part 1: {simple_result_part1}");
+  println!("Simple input Part 2: {simple_result_part2}");
 
   // Solve with full input
   let full_input = fs::read_to_string("input/day06_full.txt")?;
   let full_result_part1 = solve_part1(&full_input)?;
   let full_result_part2 = solve_part2(&full_input)?;
-  println!("Full input Part 1: {}", full_result_part1);
-  println!("Full input Part 2: {}", full_result_part2);
+  println!("Full input Part 1: {full_result_part1}");
+  println!("Full input Part 2: {full_result_part2}");
 
   Ok(())
 }
