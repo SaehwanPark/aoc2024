@@ -1,5 +1,4 @@
-![Current Advent Calendar](image.png)
-(Current status as of 27 July 2025...)
+![Advent Calendar](image.png)
 
 # Advent of Code 2024 Solutions
 
