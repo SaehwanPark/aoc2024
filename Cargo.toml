@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 regex = "1"
+anyhow = "1"
+clap = { version = "4", features = ["derive"] } # tiny CLI
