@@ -80,7 +80,7 @@ impl Warehouse {
             Cell::Robot
           }
           '.' => Cell::Empty,
-          _ => panic!("Invalid character in map: {}", ch),
+          _ => panic!("Invalid character in map: {ch}"),
         };
         grid.insert(pos, cell);
       }
@@ -126,7 +126,7 @@ impl Warehouse {
             grid.insert(left_pos, Cell::Empty);
             grid.insert(right_pos, Cell::Empty);
           }
-          _ => panic!("Invalid character in map: {}", ch),
+          _ => panic!("Invalid character in map: {ch}"),
         };
       }
     }
@@ -246,7 +246,7 @@ impl Warehouse {
     let new_robot_pos = self.robot_pos.move_direction(direction);
 
     match self.get_cell(new_robot_pos) {
-      Cell::Wall => return, // Can't move into wall
+      Cell::Wall => (), // Can't move into wall
       Cell::Empty => {
         // Simple move
         self.set_cell(self.robot_pos, Cell::Empty);
@@ -336,7 +336,7 @@ impl Warehouse {
           Cell::Robot => '@',
           Cell::Empty => '.',
         };
-        print!("{}", ch);
+        print!("{ch}");
       }
       println!();
     }
