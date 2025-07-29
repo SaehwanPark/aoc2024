@@ -1,36 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // Test with simple input first
-  println!("Testing with simple input:");
-  let simple_result = solve_day1("input/day01_simple.txt")?;
-  println!(
-    "Simple - Part 1: {}, Part 2: {}",
-    simple_result.0, simple_result.1
-  );
-
-  // Solve with full input
-  println!("\nSolving with full input:");
-  let full_result = solve_day1("input/day01_full.txt")?;
-  println!(
-    "Full - Part 1: {}, Part 2: {}",
-    full_result.0, full_result.1
-  );
-
-  Ok(())
-}
-
-fn solve_day1(file_path: &str) -> Result<(i32, i32), Box<dyn std::error::Error>> {
-  let content = fs::read_to_string(file_path)?;
-  let (left_list, right_list) = parse_input(&content)?;
-
-  let part1 = solve_part1(&left_list, &right_list);
-  let part2 = solve_part2(&left_list, &right_list);
-
-  Ok((part1, part2))
-}
-
 fn parse_input(content: &str) -> Result<(Vec<i32>, Vec<i32>), Box<dyn std::error::Error>> {
   let mut left_list = Vec::new();
   let mut right_list = Vec::new();
@@ -87,4 +57,34 @@ fn solve_part2(left_list: &[i32], right_list: &[i32]) -> i32 {
       num * count
     })
     .sum()
+}
+
+fn solve_day1(file_path: &str) -> Result<(i32, i32), Box<dyn std::error::Error>> {
+  let content = fs::read_to_string(file_path)?;
+  let (left_list, right_list) = parse_input(&content)?;
+
+  let part1 = solve_part1(&left_list, &right_list);
+  let part2 = solve_part2(&left_list, &right_list);
+
+  Ok((part1, part2))
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+  // Test with simple input first
+  println!("Testing with simple input:");
+  let simple_result = solve_day1("input/day01_simple.txt")?;
+  println!(
+    "Simple - Part 1: {}, Part 2: {}",
+    simple_result.0, simple_result.1
+  );
+
+  // Solve with full input
+  println!("\nSolving with full input:");
+  let full_result = solve_day1("input/day01_full.txt")?;
+  println!(
+    "Full - Part 1: {}, Part 2: {}",
+    full_result.0, full_result.1
+  );
+
+  Ok(())
 }
