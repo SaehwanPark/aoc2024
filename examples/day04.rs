@@ -1,6 +1,5 @@
-use std::fs;
-
 use anyhow::Result;
+use std::fs;
 
 type Grid = Vec<Vec<char>>;
 type Direction = (i32, i32);
