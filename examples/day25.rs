@@ -59,11 +59,11 @@ fn main() {
   let content = fs::read_to_string("input/day25_simple.txt").expect("failed to read input");
   let (locks, keys, available_space) = parse_input(&content);
   let result = solve_part1(&locks, &keys, available_space);
-  println!("Part 1 (simple): {}", result);
+  println!("Part 1 (simple): {result}");
 
   // solve with full input
   let content = fs::read_to_string("input/day25_full.txt").expect("failed to read input");
   let (locks, keys, available_space) = parse_input(&content);
   let result = solve_part1(&locks, &keys, available_space);
-  println!("Part 1 (full): {}", result);
+  println!("Part 1 (full): {result}");
 }

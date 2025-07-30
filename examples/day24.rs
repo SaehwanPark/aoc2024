@@ -49,7 +49,7 @@ fn parse_input(content: &str) -> Result<(HashMap<String, i32>, Vec<GateOperation
       // parse initial wire values
       let parts: Vec<&str> = line.split(": ").collect();
       if parts.len() != 2 {
-        return Err(format!("invalid wire format: {}", line));
+        return Err(format!("invalid wire format: {line}"));
       }
       let wire = parts[0].to_string();
       let value = parts[1]
@@ -60,7 +60,7 @@ fn parse_input(content: &str) -> Result<(HashMap<String, i32>, Vec<GateOperation
       // parse gate operations
       let parts: Vec<&str> = line.split(' ').collect();
       if parts.len() != 5 {
-        return Err(format!("invalid operation format: {}", line));
+        return Err(format!("invalid operation format: {line}"));
       }
 
       let input1 = parts[0].to_string();
@@ -196,7 +196,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   // calculate final output
   let result = calculate_z_output(&final_wires);
 
-  println!("{}", result);
+  println!("{result}");
   println!("{}", wrong_wires.join(","));
 
   Ok(())

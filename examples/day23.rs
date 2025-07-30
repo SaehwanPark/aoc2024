@@ -132,26 +132,26 @@ fn solve_part2(input_path: &str) -> Result<String, Box<dyn std::error::Error>> {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   // part 1 - simple input
   match solve_part1("input/day23_simple.txt") {
-    Ok(count) => println!("Part 1 Simple: {} triangles with 't'", count),
-    Err(e) => eprintln!("Error with simple input: {}", e),
+    Ok(count) => println!("Part 1 Simple: {count} triangles with 't'"),
+    Err(e) => eprintln!("Error with simple input: {e}"),
   }
 
   // part 1 - full input
   match solve_part1("input/day23_full.txt") {
-    Ok(count) => println!("Part 1 Full: {} triangles with 't'", count),
-    Err(e) => eprintln!("Error with full input: {}", e),
+    Ok(count) => println!("Part 1 Full: {count} triangles with 't'"),
+    Err(e) => eprintln!("Error with full input: {e}"),
   }
 
   // part 2 - simple input
   match solve_part2("input/day23_simple.txt") {
-    Ok(password) => println!("Part 2 Simple: password = {}", password),
-    Err(e) => eprintln!("Error with simple input: {}", e),
+    Ok(password) => println!("Part 2 Simple: password = {password}"),
+    Err(e) => eprintln!("Error with simple input: {e}"),
   }
 
   // part 2 - full input
   match solve_part2("input/day23_full.txt") {
-    Ok(password) => println!("Part 2 Full: password = {}", password),
-    Err(e) => eprintln!("Error with full input: {}", e),
+    Ok(password) => println!("Part 2 Full: password = {password}"),
+    Err(e) => eprintln!("Error with full input: {e}"),
   }
 
   Ok(())

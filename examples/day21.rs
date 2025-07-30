@@ -72,18 +72,18 @@ impl Keypad {
 
     // Try vertical first, then horizontal
     if self.is_valid_path((r1, c1), (r2, c2), true) {
-      paths.push(format!("{}{}", vertical, horizontal));
+      paths.push(format!("{vertical}{horizontal}"));
     }
 
     // Try horizontal first, then vertical (avoid duplicates)
     if self.is_valid_path((r1, c1), (r2, c2), false)
       && !(vertical.is_empty() || horizontal.is_empty())
     {
-      paths.push(format!("{}{}", horizontal, vertical));
+      paths.push(format!("{horizontal}{vertical}"));
     }
 
     if paths.is_empty() {
-      paths.push(format!("{}{}", vertical, horizontal));
+      paths.push(format!("{vertical}{horizontal}"));
     }
 
     paths
@@ -137,7 +137,7 @@ fn min_sequence_length(
     let min_cost = possible_paths
       .iter()
       .map(|path| {
-        let full_sequence = format!("{}A", path); // Add 'A' to press the button
+        let full_sequence = format!("{path}A"); // Add 'A' to press the button
         min_sequence_length(&full_sequence, depth - 1, max_depth, memo)
       })
       .min()
@@ -178,8 +178,7 @@ fn solve_with_depth(codes: &[String], depth: usize) -> usize {
     total_complexity += complexity;
 
     println!(
-      "Code: {}, Length: {}, Numeric: {}, Complexity: {}",
-      code, sequence_length, numeric_part, complexity
+      "Code: {code}, Length: {sequence_length}, Numeric: {numeric_part}, Complexity: {complexity}",
     );
   }
 

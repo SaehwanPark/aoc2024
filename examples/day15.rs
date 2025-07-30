@@ -312,7 +312,7 @@ impl Warehouse {
     let new_robot_pos = self.robot_pos.move_in_direction(direction);
 
     match self.get_cell(new_robot_pos) {
-      Cell::Wall => return, // can't move into wall
+      Cell::Wall => (), // can't move into wall
       Cell::Empty => self.move_robot_to(new_robot_pos),
       Cell::Box => {
         if let Some(box_pos) = self.try_push_simple_boxes(self.robot_pos, direction) {

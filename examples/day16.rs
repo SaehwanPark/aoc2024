@@ -160,7 +160,7 @@ impl Maze {
 
           let should_update = distances
             .get(&next_state)
-            .map_or(true, |&existing_cost| next_cost < existing_cost);
+            .is_none_or(|&existing_cost| next_cost < existing_cost);
 
           if should_update {
             distances.insert(next_state, next_cost);
@@ -178,7 +178,7 @@ impl Maze {
 
       let should_update = distances
         .get(&clockwise_state)
-        .map_or(true, |&existing_cost| turn_cost < existing_cost);
+        .is_none_or(|&existing_cost| turn_cost < existing_cost);
 
       if should_update {
         distances.insert(clockwise_state, turn_cost);
@@ -193,7 +193,7 @@ impl Maze {
 
       let should_update = distances
         .get(&counterclockwise_state)
-        .map_or(true, |&existing_cost| turn_cost < existing_cost);
+        .is_none_or(|&existing_cost| turn_cost < existing_cost);
 
       if should_update {
         distances.insert(counterclockwise_state, turn_cost);
@@ -251,7 +251,7 @@ impl Maze {
 
           let should_update = distances
             .get(&prev_state)
-            .map_or(true, |&existing_cost| prev_cost < existing_cost);
+            .is_none_or(|&existing_cost| prev_cost < existing_cost);
 
           if should_update {
             distances.insert(prev_state, prev_cost);
@@ -269,7 +269,7 @@ impl Maze {
 
       let should_update = distances
         .get(&from_clockwise)
-        .map_or(true, |&existing_cost| turn_cost < existing_cost);
+        .is_none_or(|&existing_cost| turn_cost < existing_cost);
 
       if should_update {
         distances.insert(from_clockwise, turn_cost);
@@ -283,7 +283,7 @@ impl Maze {
 
       let should_update = distances
         .get(&from_counterclockwise)
-        .map_or(true, |&existing_cost| turn_cost < existing_cost);
+        .is_none_or(|&existing_cost| turn_cost < existing_cost);
 
       if should_update {
         distances.insert(from_counterclockwise, turn_cost);

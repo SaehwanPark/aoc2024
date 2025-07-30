@@ -207,13 +207,12 @@ fn analyze_example_cheats(input: &str, max_cheat_time: usize, min_analysis_savin
   }
 
   println!(
-    "Example cheat analysis (≥{} picoseconds saved, max cheat time {}):",
-    min_analysis_savings, max_cheat_time
+    "Example cheat analysis (≥{min_analysis_savings} picoseconds saved, max cheat time {max_cheat_time}):"
   );
   let mut savings_vec: Vec<_> = savings_count.iter().collect();
   savings_vec.sort_by_key(|&(savings, _)| savings);
   for (&savings, &count) in savings_vec {
-    println!("  {} cheats save {} picoseconds", count, savings);
+    println!("  {count} cheats save {savings} picoseconds");
   }
 }
 
@@ -233,8 +232,8 @@ fn main() {
     std::fs::read_to_string("input/day20_full.txt").expect("Failed to read full input file");
 
   let part1_result = solve_part1(&full_input, 100);
-  println!("\nPart 1: {}", part1_result);
+  println!("\nPart 1: {part1_result}");
 
   let part2_result = solve_part2(&full_input, 100);
-  println!("Part 2: {}", part2_result);
+  println!("Part 2: {part2_result}");
 }

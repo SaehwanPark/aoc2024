@@ -85,15 +85,13 @@ fn solve_part2(input: &str) -> u64 {
     let mut seen_sequences = HashMap::new();
 
     // Go through all possible 4-change sequences for this buyer
-    for i in 0..changes.len().saturating_sub(3) {
-      let sequence = [changes[i], changes[i + 1], changes[i + 2], changes[i + 3]];
+    for (i, window) in changes.windows(4).enumerate() {
+      let sequence: [_; 4] = window.try_into().unwrap();
 
-      // Only record the first occurrence of this sequence for this buyer
-      if !seen_sequences.contains_key(&sequence) {
-        let price = prices[i + 4]; // Price after the 4th change
-        seen_sequences.insert(sequence, price);
-
-        // Add to the total for this sequence across all buyers
+      // only process if this is the first time we've seen this sequence
+      if let std::collections::hash_map::Entry::Vacant(entry) = seen_sequences.entry(sequence) {
+        let price = prices[i + 4];
+        entry.insert(price);
         *sequence_totals.entry(sequence).or_insert(0) += price as u64;
       }
     }
@@ -113,7 +111,7 @@ fn debug_part2_example() {
   let target_sequence = [-2, 1, -1, 3];
   let mut total_bananas = 0;
 
-  println!("Checking target sequence {:?}:", target_sequence);
+  println!("Checking target sequence {target_sequence:?}:");
   for (buyer_idx, &secret) in initial_secrets.iter().enumerate() {
     let (prices, changes) = generate_prices_and_changes(secret, 2000);
 
@@ -138,10 +136,7 @@ fn debug_part2_example() {
     );
   }
 
-  println!(
-    "Total bananas for sequence {:?}: {}",
-    target_sequence, total_bananas
-  );
+  println!("Total bananas for sequence {target_sequence:?}: {total_bananas}",);
 
   // Now let's find what the actual optimal sequence is
   println!("\nFinding optimal sequence:");
@@ -155,12 +150,12 @@ fn debug_part2_example() {
   for (prices, changes) in &buyers_data {
     let mut seen_sequences = HashMap::new();
 
-    for i in 0..changes.len().saturating_sub(3) {
-      let sequence = [changes[i], changes[i + 1], changes[i + 2], changes[i + 3]];
+    for (i, window) in changes.windows(4).enumerate() {
+      let sequence: [_; 4] = window.try_into().unwrap();
 
-      if !seen_sequences.contains_key(&sequence) {
+      if let std::collections::hash_map::Entry::Vacant(entry) = seen_sequences.entry(sequence) {
         let price = prices[i + 4];
-        seen_sequences.insert(sequence, price);
+        entry.insert(price);
         *sequence_totals.entry(sequence).or_insert(0) += price as u64;
       }
     }
@@ -172,20 +167,17 @@ fn debug_part2_example() {
     .map(|(&seq, &total)| (seq, total))
     .unwrap();
 
-  println!(
-    "Optimal sequence: {:?} with {} bananas",
-    best_sequence, best_total
-  );
+  println!("Optimal sequence: {best_sequence:?} with {best_total} bananas",);
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   // Test with simple input
   let simple_input = fs::read_to_string("input/day22_simple.txt")?;
   let simple_result_p1 = solve_part1(&simple_input);
-  println!("Part 1 - Simple input result: {}", simple_result_p1);
+  println!("Part 1 - Simple input result: {simple_result_p1}");
 
   let simple_result_p2 = solve_part2(&simple_input);
-  println!("Part 2 - Simple input result: {}", simple_result_p2);
+  println!("Part 2 - Simple input result: {simple_result_p2}");
 
   // Debug Part 2 example
   println!("\nDebugging Part 2 example:");
@@ -194,10 +186,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   // Solve with full input
   let full_input = fs::read_to_string("input/day22_full.txt")?;
   let full_result_p1 = solve_part1(&full_input);
-  println!("\nPart 1 - Full input result: {}", full_result_p1);
+  println!("\nPart 1 - Full input result: {full_result_p1}");
 
   let full_result_p2 = solve_part2(&full_input);
-  println!("Part 2 - Full input result: {}", full_result_p2);
+  println!("Part 2 - Full input result: {full_result_p2}");
 
   // Verify the Part 1 example from the problem description
   println!("\nVerifying Part 1 example:");
@@ -205,10 +197,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut total = 0;
   for initial in test_secrets {
     let result = simulate_buyer(initial, 2000);
-    println!("{}: {}", initial, result);
+    println!("{initial}: {result}");
     total += result;
   }
-  println!("Expected total: 37327623, Actual total: {}", total);
+  println!("Expected total: 37327623, Actual total: {total}");
 
   Ok(())
 }

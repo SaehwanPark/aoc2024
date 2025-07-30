@@ -60,7 +60,7 @@ fn solve_part1(input: &str) -> usize {
   let patterns: HashSet<String> = lines[0].split(", ").map(|s| s.to_string()).collect();
 
   // Parse designs (skip first line and empty line)
-  let designs: Vec<&str> = lines[2..].iter().copied().collect();
+  let designs: Vec<&str> = lines[2..].to_vec();
 
   let mut count = 0;
   for design in designs {
@@ -80,7 +80,7 @@ fn solve_part2(input: &str) -> usize {
   let patterns: HashSet<String> = lines[0].split(", ").map(|s| s.to_string()).collect();
 
   // Parse designs (skip first line and empty line)
-  let designs: Vec<&str> = lines[2..].iter().copied().collect();
+  let designs: Vec<&str> = lines[2..].to_vec();
 
   let mut total_ways = 0;
   for design in designs {

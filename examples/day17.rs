@@ -300,9 +300,9 @@ fn main() -> Result<()> {
   if let Some(custom_input) = cli.input {
     let (part1, part2) = process_input(&custom_input)?;
     println!("Input: {}", custom_input.display());
-    println!("Part 1 = {}", part1);
+    println!("Part 1 = {part1}");
     match part2 {
-      Some(value) => println!("Part 2 = {}", value),
+      Some(value) => println!("Part 2 = {value}"),
       None => println!("Part 2 = N/A (program cannot be a quine)"),
     }
     return Ok(());
@@ -319,26 +319,26 @@ fn main() -> Result<()> {
   // Part 1 Results
   println!("Part 1 Results:");
   match &simple_result {
-    Ok((part1, _)) => println!("  Simple: {}", part1),
-    Err(e) => println!("  Simple: Error - {}", e),
+    Ok((part1, _)) => println!("  Simple: {part1}"),
+    Err(e) => println!("  Simple: Error - {e}"),
   }
   match &full_result {
-    Ok((part1, _)) => println!("  Full:   {}", part1),
-    Err(e) => println!("  Full:   Error - {}", e),
+    Ok((part1, _)) => println!("  Full:   {part1}"),
+    Err(e) => println!("  Full:   Error - {e}"),
   }
   println!();
 
   // Part 2 Results
   println!("Part 2 Results:");
   match &simple_result {
-    Ok((_, Some(part2))) => println!("  Simple: {}", part2),
+    Ok((_, Some(part2))) => println!("  Simple: {part2}"),
     Ok((_, None)) => println!("  Simple: N/A (cannot be quine)"),
-    Err(e) => println!("  Simple: Error - {}", e),
+    Err(e) => println!("  Simple: Error - {e}"),
   }
   match &full_result {
-    Ok((_, Some(part2))) => println!("  Full:   {}", part2),
+    Ok((_, Some(part2))) => println!("  Full:   {part2}"),
     Ok((_, None)) => println!("  Full:   N/A (cannot be quine)"),
-    Err(e) => println!("  Full:   Error - {}", e),
+    Err(e) => println!("  Full:   Error - {e}"),
   }
 
   Ok(())
