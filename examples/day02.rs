@@ -1,5 +1,5 @@
+use anyhow::Result;
 use std::fs;
-use std::path::Path;
 
 #[derive(Debug, Clone)]
 struct Report {
@@ -82,11 +82,6 @@ fn parse_input(content: &str) -> Vec<Report> {
     .collect()
 }
 
-fn read_input_file<P: AsRef<Path>>(file_path: P) -> Result<String, Box<dyn std::error::Error>> {
-  let content = fs::read_to_string(file_path)?;
-  Ok(content)
-}
-
 fn count_safe_reports(reports: &[Report]) -> usize {
   reports.iter().filter(|report| report.is_safe()).count()
 }
@@ -98,31 +93,25 @@ fn count_safe_reports_with_dampener(reports: &[Report]) -> usize {
     .count()
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // test with simple example first
-  let simple_content = read_input_file("input/day02_simple.txt")?;
-  let simple_reports = parse_input(&simple_content);
-  let simple_safe_count = count_safe_reports(&simple_reports);
-  let simple_safe_count_with_dampener = count_safe_reports_with_dampener(&simple_reports);
+fn solve(input: &str, part: u8) -> usize {
+  let reports = parse_input(input);
+  match part {
+    1 => count_safe_reports(&reports),
+    2 => count_safe_reports_with_dampener(&reports),
+    _ => panic!("Only parts 1 or 2."),
+  }
+}
 
-  println!(
-    "Parsed {} reports from simple input, {} safe reports, {} w/ dampener",
-    simple_reports.len(),
-    simple_safe_count,
-    simple_safe_count_with_dampener
-  );
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
-  let full_content = read_input_file("input/day02_full.txt")?;
-  let full_reports = parse_input(&full_content);
-  let full_safe_count = count_safe_reports(&full_reports);
-  let full_safe_count_with_dampener = count_safe_reports_with_dampener(&full_reports);
-
-  println!(
-    "Parsed {} reports from full input, {} safe reports, {} w/ dampener",
-    full_reports.len(),
-    full_safe_count,
-    full_safe_count_with_dampener
-  );
-
+fn main() -> Result<()> {
+  print_result("input/day02_simple.txt", "Simple puzzle")?;
+  print_result("input/day02_full.txt", "Full puzzle")?;
   Ok(())
 }
