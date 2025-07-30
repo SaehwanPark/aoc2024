@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{BinaryHeap, HashMap};
 use std::fs;
 
@@ -353,34 +354,25 @@ impl Maze {
   }
 }
 
-fn solve_part1(input: &str) -> u32 {
+fn solve(input: &str, part: u8) -> usize {
   let maze = Maze::from_input(input);
-  maze.find_minimum_score()
+  match part {
+    1 => maze.find_minimum_score() as usize,
+    2 => maze.find_optimal_tiles(),
+    _ => panic!("Only parts 1 or 2."),
+  }
 }
 
-fn solve_part2(input: &str) -> usize {
-  let maze = Maze::from_input(input);
-  maze.find_optimal_tiles()
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
 }
 
-fn main() {
-  // Test with simple example
-  let simple_input =
-    fs::read_to_string("input/day16_simple.txt").expect("Failed to read simple input file");
-  let simple_result_p1 = solve_part1(&simple_input);
-  let simple_result_p2 = solve_part2(&simple_input);
-  println!(
-    "Simple example - Part 1: {}, Part 2: {}",
-    simple_result_p1, simple_result_p2
-  );
-
-  // Solve with full input
-  let full_input =
-    fs::read_to_string("input/day16_full.txt").expect("Failed to read full input file");
-  let full_result_p1 = solve_part1(&full_input);
-  let full_result_p2 = solve_part2(&full_input);
-  println!(
-    "Full input - Part 1: {}, Part 2: {}",
-    full_result_p1, full_result_p2
-  );
+fn main() -> Result<()> {
+  print_result("input/day16_simple.txt", "Simple puzzle")?;
+  print_result("input/day16_full.txt", "Full puzzle")?;
+  Ok(())
 }
