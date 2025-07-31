@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::fs;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -162,44 +163,26 @@ impl Disk {
   }
 }
 
-fn solve_part1(input: &str) -> u64 {
+fn solve(input: &str, part: u8) -> u64 {
   let mut disk = Disk::from_disk_map(input);
-  disk.compact();
+  match part {
+    1 => disk.compact(),
+    2 => disk.compact_whole_files(),
+    _ => panic!("Only parts 1 and 2."),
+  };
   disk.checksum()
 }
 
-fn solve_part2(input: &str) -> u64 {
-  let mut disk = Disk::from_disk_map(input);
-  disk.compact_whole_files();
-  disk.checksum()
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // Test with simple example
-  let simple_input = fs::read_to_string("input/day09_simple.txt")?;
-
-  let simple_result_part1 = solve_part1(&simple_input);
-  println!("Part 1 - Simple input result: {simple_result_part1}");
-  assert_eq!(
-    simple_result_part1, 1928,
-    "Part 1 simple example should give 1928"
-  );
-
-  let simple_result_part2 = solve_part2(&simple_input);
-  println!("Part 2 - Simple input result: {simple_result_part2}");
-  assert_eq!(
-    simple_result_part2, 2858,
-    "Part 2 simple example should give 2858"
-  );
-
-  // Solve with full input
-  let full_input = fs::read_to_string("input/day09_full.txt")?;
-
-  let full_result_part1 = solve_part1(&full_input);
-  println!("Part 1 - Full input result: {full_result_part1}");
-
-  let full_result_part2 = solve_part2(&full_input);
-  println!("Part 2 - Full input result: {full_result_part2}");
-
+fn main() -> Result<()> {
+  print_result("input/day09_simple.txt", "Simple puzzle")?;
+  print_result("input/day09_full.txt", "Full puzzle")?;
   Ok(())
 }
