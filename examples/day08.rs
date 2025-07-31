@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -49,7 +50,7 @@ impl Grid {
     }
   }
 
-  fn find_antinodes_part1(&self) -> HashSet<Position> {
+  fn find_antinodes(&self) -> HashSet<Position> {
     let mut antinodes = HashSet::new();
 
     for positions in self.antennas.values() {
@@ -75,7 +76,7 @@ impl Grid {
     antinodes
   }
 
-  fn find_antinodes_part2(&self) -> HashSet<Position> {
+  fn find_antinodes_alternatively(&self) -> HashSet<Position> {
     let mut antinodes = HashSet::new();
 
     for positions in self.antennas.values() {
@@ -130,41 +131,25 @@ fn gcd(a: i32, b: i32) -> i32 {
   if b == 0 { a } else { gcd(b, a % b) }
 }
 
-fn solve_part1(input: &str) -> usize {
+fn solve(input: &str, part: u8) -> usize {
   let grid = Grid::parse(input);
-  grid.find_antinodes_part1().len()
+  match part {
+    1 => grid.find_antinodes().len(),
+    2 => grid.find_antinodes_alternatively().len(),
+    _ => panic!("Only parts 1 and 2."),
+  }
 }
 
-fn solve_part2(input: &str) -> usize {
-  let grid = Grid::parse(input);
-  grid.find_antinodes_part2().len()
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // Test with simple input
-  let simple_input = fs::read_to_string("input/day08_simple.txt")?;
-  let simple_result_part1 = solve_part1(&simple_input);
-  let simple_result_part2 = solve_part2(&simple_input);
-
-  println!("Part 1 (simple): {simple_result_part1}");
-  println!("Part 2 (simple): {simple_result_part2}");
-
-  assert_eq!(
-    simple_result_part1, 14,
-    "Part 1 simple test case should return 14"
-  );
-  assert_eq!(
-    simple_result_part2, 34,
-    "Part 2 simple test case should return 34"
-  );
-
-  // Solve with full input
-  let full_input = fs::read_to_string("input/day08_full.txt")?;
-  let full_result_part1 = solve_part1(&full_input);
-  let full_result_part2 = solve_part2(&full_input);
-
-  println!("Part 1 (full): {full_result_part1}");
-  println!("Part 2 (full): {full_result_part2}");
-
+fn main() -> Result<()> {
+  print_result("input/day08_simple.txt", "Simple puzzle")?;
+  print_result("input/day08_full.txt", "Full puzzle")?;
   Ok(())
 }
