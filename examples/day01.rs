@@ -56,7 +56,7 @@ fn calculate_similarity_score(left_list: &[i32], right_list: &[i32]) -> i32 {
 }
 
 fn solve(input: &str, part: u8) -> i32 {
-  let (left_list, right_list) = parse_input(&input).expect("Can't parse input.");
+  let (left_list, right_list) = parse_input(input).expect("Can't parse input.");
   match part {
     1 => calculate_total_distance(&left_list, &right_list),
     2 => calculate_similarity_score(&left_list, &right_list),
