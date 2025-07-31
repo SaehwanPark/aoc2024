@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -63,7 +64,7 @@ impl PrintQueue {
     update[update.len() / 2]
   }
 
-  fn solve_part1(&self) -> u32 {
+  fn sum_middle_pages_of_valid_updates(&self) -> u32 {
     self
       .updates
       .iter()
@@ -96,7 +97,7 @@ impl PrintQueue {
     pages
   }
 
-  fn solve_part2(&self) -> u32 {
+  fn sum_middle_pages_with_fixed_updates(&self) -> u32 {
     self
       .updates
       .iter()
@@ -108,21 +109,25 @@ impl PrintQueue {
       .sum()
   }
 }
+fn solve(input: &str, part: u8) -> u32 {
+  let print_queue = PrintQueue::from_input(input);
+  match part {
+    1 => print_queue.sum_middle_pages_of_valid_updates(),
+    2 => print_queue.sum_middle_pages_with_fixed_updates(),
+    _ => panic!("Only parts 1 or 2."),
+  }
+}
 
-fn main() {
-  let simple_input =
-    fs::read_to_string("input/day05_simple.txt").expect("Failed to read simple input file");
-  let print_queue = PrintQueue::from_input(&simple_input);
-  let result_p1 = print_queue.solve_part1();
-  let result_p2 = print_queue.solve_part2();
-  println!("Simple input result: {result_p1} and {result_p2}");
-  assert_eq!(result_p1, 143, "Simple input should yield 143 for part 1");
-  assert_eq!(result_p2, 123, "Simple input should yield 143 for part 2");
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
-  let full_input =
-    fs::read_to_string("input/day05_full.txt").expect("Failed to read simple input file");
-  let print_queue_full = PrintQueue::from_input(&full_input);
-  let full_result_p1 = print_queue_full.solve_part1();
-  let full_result_p2 = print_queue_full.solve_part2();
-  println!("Full input result: {full_result_p1} and {full_result_p2}");
+fn main() -> Result<()> {
+  print_result("input/day05_simple.txt", "Simple puzzle")?;
+  print_result("input/day05_full.txt", "Full puzzle")?;
+  Ok(())
 }
