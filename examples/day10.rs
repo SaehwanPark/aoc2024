@@ -1,5 +1,6 @@
+use anyhow::Result;
 use std::collections::{HashSet, VecDeque};
-use std::fs;
+use std::{fs, panic};
 
 type Position = (usize, usize);
 
@@ -126,7 +127,7 @@ impl TopographicMap {
       .sum()
   }
 
-  fn solve_part1(&self) -> usize {
+  fn sum_scores(&self) -> usize {
     self
       .find_trailheads()
       .iter()
@@ -134,7 +135,7 @@ impl TopographicMap {
       .sum()
   }
 
-  fn solve_part2(&self) -> usize {
+  fn sum_ratings(&self) -> usize {
     self
       .find_trailheads()
       .iter()
@@ -143,18 +144,25 @@ impl TopographicMap {
   }
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // Test with simple example
-  let simple_input = fs::read_to_string("input/day10_simple.txt")?;
-  let simple_map = TopographicMap::new(&simple_input);
-  println!("Simple example Part 1: {}", simple_map.solve_part1());
-  println!("Simple example Part 2: {}", simple_map.solve_part2());
+fn solve(input: &str, part: u8) -> usize {
+  let map = TopographicMap::new(input);
+  match part {
+    1 => map.sum_scores(),
+    2 => map.sum_ratings(),
+    _ => panic!("Only part 1 or 2."),
+  }
+}
 
-  // Solve with full input
-  let full_input = fs::read_to_string("input/day10_full.txt")?;
-  let full_map = TopographicMap::new(&full_input);
-  println!("Part 1 result: {}", full_map.solve_part1());
-  println!("Part 2 result: {}", full_map.solve_part2());
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
+fn main() -> Result<()> {
+  print_result("input/day10_simple.txt", "Simple puzzle")?;
+  print_result("input/day10_full.txt", "Full puzzle")?;
   Ok(())
 }
