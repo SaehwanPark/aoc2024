@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::fs;
 
 #[derive(Debug, Clone)]
@@ -80,7 +81,7 @@ fn concatenate_numbers(left: u64, right: u64) -> u64 {
   left * 10_u64.pow(right_digits) + right
 }
 
-fn solve_part1(input: &str) -> u64 {
+fn get_total_calibration_result(input: &str) -> u64 {
   input
     .lines()
     .filter_map(Equation::from_line)
@@ -89,7 +90,7 @@ fn solve_part1(input: &str) -> u64 {
     .sum()
 }
 
-fn solve_part2(input: &str) -> u64 {
+fn get_total_calibration_result_with_concatenation(input: &str) -> u64 {
   input
     .lines()
     .filter_map(Equation::from_line)
@@ -98,26 +99,24 @@ fn solve_part2(input: &str) -> u64 {
     .sum()
 }
 
-fn main() {
-  // Test with simple example
-  let simple_input =
-    fs::read_to_string("input/day07_simple.txt").expect("Failed to read simple input file");
+fn solve(input: &str, part: u8) -> u64 {
+  match part {
+    1 => get_total_calibration_result(input),
+    2 => get_total_calibration_result_with_concatenation(input),
+    _ => panic!("Only parts 1 or 2."),
+  }
+}
 
-  let simple_result_part1 = solve_part1(&simple_input);
-  println!("Part 1 (simple): {simple_result_part1}");
-  assert_eq!(simple_result_part1, 3749);
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
-  let simple_result_part2 = solve_part2(&simple_input);
-  println!("Part 2 (simple): {simple_result_part2}");
-  assert_eq!(simple_result_part2, 11387);
-
-  // Solve with full input
-  let full_input =
-    fs::read_to_string("input/day07_full.txt").expect("Failed to read full input file");
-
-  let full_result_part1 = solve_part1(&full_input);
-  println!("Part 1 (full): {full_result_part1}");
-
-  let full_result_part2 = solve_part2(&full_input);
-  println!("Part 2 (full): {full_result_part2}");
+fn main() -> Result<()> {
+  print_result("input/day07_simple.txt", "Simple puzzle")?;
+  print_result("input/day07_full.txt", "Full puzzle")?;
+  Ok(())
 }
