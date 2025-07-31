@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::HashSet;
 use std::fs;
 
@@ -218,30 +219,27 @@ impl GuardSimulator {
   }
 }
 
-fn solve_part1(input: &str) -> Result<usize, String> {
-  let simulator = GuardSimulator::new(input)?;
-  Ok(simulator.simulate_patrol().len())
+fn solve(input: &str, part: u8) -> Result<usize> {
+  let simulator = GuardSimulator::new(input).expect("Invalid input");
+  match part {
+    1 => Ok(simulator.simulate_patrol().len()),
+    2 => Ok(simulator.count_loop_positions()),
+    _ => panic!("Only parts 1 and 2."),
+  }
 }
 
-fn solve_part2(input: &str) -> Result<usize, String> {
-  let simulator = GuardSimulator::new(input)?;
-  Ok(simulator.count_loop_positions())
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  let result1 = solve(&input, 1)?;
+  let result2 = solve(&input, 2)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {result1}");
+  println!("Part 2 result = {result2}\n");
+  Ok(())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // Test with simple input
-  let simple_input = fs::read_to_string("input/day06_simple.txt")?;
-  let simple_result_part1 = solve_part1(&simple_input)?;
-  let simple_result_part2 = solve_part2(&simple_input)?;
-  println!("Simple input Part 1: {simple_result_part1}");
-  println!("Simple input Part 2: {simple_result_part2}");
-
-  // Solve with full input
-  let full_input = fs::read_to_string("input/day06_full.txt")?;
-  let full_result_part1 = solve_part1(&full_input)?;
-  let full_result_part2 = solve_part2(&full_input)?;
-  println!("Full input Part 1: {full_result_part1}");
-  println!("Full input Part 2: {full_result_part2}");
-
+fn main() -> Result<()> {
+  print_result("input/day06_simple.txt", "Simple puzzle")?;
+  print_result("input/day06_full.txt", "Full puzzle")?;
   Ok(())
 }
