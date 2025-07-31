@@ -63,7 +63,7 @@ fn parse_grid(input: &str) -> Grid {
   input.lines().map(|l| l.chars().collect()).collect()
 }
 
-fn solve_part1(input: &str) -> usize {
+fn count_xmas(input: &str) -> usize {
   let grid = parse_grid(input);
   let (rows, cols) = (grid.len(), grid[0].len());
   let target_chars: Vec<char> = "XMAS".chars().collect();
@@ -80,7 +80,7 @@ fn solve_part1(input: &str) -> usize {
   count
 }
 
-fn solve_part2(input: &str) -> usize {
+fn count_x_mas(input: &str) -> usize {
   let grid = parse_grid(input);
   let (rows, cols) = (grid.len(), grid[0].len());
   let mut count = 0;
@@ -96,19 +96,24 @@ fn solve_part2(input: &str) -> usize {
   count
 }
 
-fn process_input_file(filename: &str, file_type: &str) -> Result<()> {
-  let input = fs::read_to_string(filename)?;
-  let part1_result = solve_part1(&input);
-  let part2_result = solve_part2(&input);
+fn solve(input: &str, part: u8) -> usize {
+  match part {
+    1 => count_xmas(input),
+    2 => count_x_mas(input),
+    _ => panic!("Only parts 1 or 2."),
+  }
+}
 
-  println!("{file_type} input result P1: {part1_result}");
-  println!("{file_type} input result P2: {part2_result}");
-
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
   Ok(())
 }
 
 fn main() -> Result<()> {
-  process_input_file("input/day04_simple.txt", "Simple")?;
-  process_input_file("input/day04_full.txt", "Full")?;
+  print_result("input/day04_simple.txt", "Simple puzzle")?;
+  print_result("input/day04_full.txt", "Full puzzle")?;
   Ok(())
 }
