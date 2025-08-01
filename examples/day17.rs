@@ -102,12 +102,11 @@ fn exec(mut regs: Regs, prog: &[u8]) -> Result<Vec<u8>> {
   Ok(out)
 }
 
-/// Simulate **exactly one loop iteration** of the program.
-/// Returns `(digit_emitted, next_A)` where next_A is the value of register A
-/// after one complete iteration of the program loop.
-///
-/// This is more robust than running until first output because it properly
-/// detects when the program loops back to the beginning or halts.
+/**
+ * Simulatse exactly one loop iteration of the program.
+ * Returns `(digit_emitted, next_A)` where next_A is the value of register A
+ * after one complete iteration of the program loop.
+ */
 fn step_once(a0: i128, init_b: i128, init_c: i128, prog: &[u8]) -> Result<(u8, i128)> {
   let (mut a, mut b, mut c) = (a0, init_b, init_c);
   let mut pc = 0usize;
@@ -183,12 +182,10 @@ fn step_once(a0: i128, init_b: i128, init_c: i128, prog: &[u8]) -> Result<(u8, i
   }
 }
 
-/// Find the smallest positive initial value for register A that causes the
-/// program to output a copy of itself (a quine).
-///
-/// Uses reverse search: starting from the final state (A=0), work backwards
-/// through each program digit to find all possible A values that could
-/// produce that digit, then select the minimum.
+/**
+ *  Finds the smallest positive initial value for register A that causes the
+ *  program to output a copy of itself (a quine)
+ */
 fn find_quine_value(init_b: i128, init_c: i128, prog: &[u8]) -> Result<i128> {
   // Each element represents a possible value of A *after* one iteration
   let mut frontier: HashSet<i128> = [0].into_iter().collect();
