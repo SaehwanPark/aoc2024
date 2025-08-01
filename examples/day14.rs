@@ -1,3 +1,4 @@
+use anyhow::Result;
 use regex::Regex;
 use std::fs;
 
@@ -64,11 +65,6 @@ fn calculate_safety_factor(robots: &[Robot], width: i32, height: i32, seconds: i
   quadrants.iter().product()
 }
 
-fn solve_part1(input: &str, width: i32, height: i32) -> usize {
-  let robots = parse_robots(input);
-  calculate_safety_factor(&robots, width, height, 100)
-}
-
 fn calculate_position_variance(robots: &[Robot], width: i32, height: i32, seconds: i32) -> f64 {
   let positions: Vec<(i32, i32)> = robots
     .iter()
@@ -98,6 +94,7 @@ fn calculate_position_variance(robots: &[Robot], width: i32, height: i32, second
   variance_x + variance_y
 }
 
+#[allow(dead_code)]
 fn visualize_robots(robots: &[Robot], width: i32, height: i32, seconds: i32) -> String {
   let positions: std::collections::HashSet<(i32, i32)> = robots
     .iter()
@@ -118,9 +115,7 @@ fn visualize_robots(robots: &[Robot], width: i32, height: i32, seconds: i32) -> 
   grid
 }
 
-fn solve_part2(input: &str, width: i32, height: i32) -> i32 {
-  let robots = parse_robots(input);
-
+fn minimize_robot_time_to_display_easter_egg(robots: &[Robot], width: i32, height: i32) -> usize {
   // The pattern repeats every width * height seconds due to the modular arithmetic
   let max_seconds = width * height;
 
@@ -136,31 +131,34 @@ fn solve_part2(input: &str, width: i32, height: i32) -> i32 {
     }
   }
 
-  best_seconds
+  best_seconds as usize
 }
 
-fn main() {
-  // Test with simple example
-  let simple_input =
-    fs::read_to_string("input/day14_simple.txt").expect("Failed to read simple input file");
-  let simple_result = solve_part1(&simple_input, 11, 7);
-  println!("Simple example result: {simple_result}");
-  assert_eq!(simple_result, 12);
+fn solve(input: &str, width: i32, height: i32, part: u8) -> usize {
+  let robots = parse_robots(input);
 
-  // Solve with full input
-  let full_input =
-    fs::read_to_string("input/day14_full.txt").expect("Failed to read full input file");
-  let full_result = solve_part1(&full_input, 101, 103);
-  println!("Part 1 result: {full_result}");
+  match part {
+    1 => calculate_safety_factor(&robots, width, height, 100),
+    2 => minimize_robot_time_to_display_easter_egg(&robots, width, height),
+    _ => panic!("Only part 1 or 2 is possible."),
+  }
+}
 
-  // Part 2: Find the Christmas tree
-  let part2_result = solve_part2(&full_input, 101, 103);
-  println!("Part 2 result: {part2_result}");
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  let (width, height) = match puzzle_kind {
+    "Simple puzzle" => (11, 7),
+    "Full puzzle" => (101, 103),
+    _ => panic!("Neither simple nor full puzzle."),
+  };
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, width, height, 1));
+  println!("Part 2 result = {}\n", solve(&input, width, height, 2));
+  Ok(())
+}
 
-  // Visualize the Christmas tree
-  let robots = parse_robots(&full_input);
-  let tree_visualization = visualize_robots(&robots, 101, 103, part2_result);
-  println!("Christmas tree at {part2_result} seconds:");
-
-  println!("{tree_visualization}");
+fn main() -> Result<()> {
+  print_result("input/day14_simple.txt", "Simple puzzle")?;
+  print_result("input/day14_full.txt", "Full puzzle")?;
+  Ok(())
 }
