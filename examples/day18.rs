@@ -1,6 +1,6 @@
 use anyhow::Result;
 use std::collections::{HashSet, VecDeque};
-use std::{fs, panic};
+use std::fs;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct Position {
