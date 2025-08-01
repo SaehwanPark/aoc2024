@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::fs;
 
 #[derive(Debug, Clone, Copy)]
@@ -128,14 +129,14 @@ fn parse_input(input: &str) -> Vec<ClawMachine> {
   machines
 }
 
-fn solve_part1(machines: &[ClawMachine]) -> i64 {
+fn minimize_tokens_to_win_prizes(machines: &[ClawMachine]) -> i64 {
   machines
     .iter()
     .filter_map(|machine| machine.solve(Some(100)))
     .sum()
 }
 
-fn solve_part2(machines: &[ClawMachine]) -> i64 {
+fn minimize_tokens_to_win_prizes_with_modified_positions(machines: &[ClawMachine]) -> i64 {
   // Part 2: Add 10000000000000 to prize coordinates and no button press limit
   machines
     .iter()
@@ -151,28 +152,25 @@ fn solve_part2(machines: &[ClawMachine]) -> i64 {
     .sum()
 }
 
-fn main() {
-  // Test with simple input
-  let simple_input =
-    fs::read_to_string("input/day13_simple.txt").expect("Failed to read simple input file");
-  let simple_machines = parse_input(&simple_input);
+fn solve(input: &str, part: u8) -> i64 {
+  let machines = parse_input(input);
+  match part {
+    1 => minimize_tokens_to_win_prizes(&machines),
+    2 => minimize_tokens_to_win_prizes_with_modified_positions(&machines),
+    _ => panic!("Only part 1 or 2 is possible."),
+  }
+}
 
-  println!("=== Part 1 ===");
-  let part1_simple = solve_part1(&simple_machines);
-  println!("Simple input result: {part1_simple}");
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
-  // Full input
-  let full_input =
-    fs::read_to_string("input/day13_full.txt").expect("Failed to read full input file");
-  let full_machines = parse_input(&full_input);
-
-  let part1_full = solve_part1(&full_machines);
-  println!("Full input result: {part1_full}");
-
-  println!("\n=== Part 2 ===");
-  let part2_simple = solve_part2(&simple_machines);
-  println!("Simple input result: {part2_simple}");
-
-  let part2_full = solve_part2(&full_machines);
-  println!("Full input result: {part2_full}");
+fn main() -> Result<()> {
+  print_result("input/day13_simple.txt", "Simple puzzle")?;
+  print_result("input/day13_full.txt", "Full puzzle")?;
+  Ok(())
 }
