@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{HashSet, VecDeque};
 use std::fs;
 
@@ -117,11 +118,11 @@ impl Region {
     }
   }
 
-  fn price_part1(&self) -> usize {
+  fn multiply_area_by_perimeter(&self) -> usize {
     self.area * self.perimeter
   }
 
-  fn price_part2(&self) -> usize {
+  fn multiply_area_by_sides(&self) -> usize {
     self.area * self.sides
   }
 }
@@ -196,47 +197,42 @@ impl GardenMap {
     }
   }
 
-  fn total_price_part1(&self) -> usize {
-    self.regions.iter().map(|region| region.price_part1()).sum()
+  fn calculate_total_price(&self) -> usize {
+    self
+      .regions
+      .iter()
+      .map(|region| region.multiply_area_by_perimeter())
+      .sum()
   }
 
-  fn total_price_part2(&self) -> usize {
-    self.regions.iter().map(|region| region.price_part2()).sum()
+  fn calculate_total_price_under_bulk_discount(&self) -> usize {
+    self
+      .regions
+      .iter()
+      .map(|region| region.multiply_area_by_sides())
+      .sum()
   }
 }
 
-fn solve_part1(input: &str) -> usize {
+fn solve(input: &str, part: u8) -> usize {
   let garden = GardenMap::new(input);
-  garden.total_price_part1()
+  match part {
+    1 => garden.calculate_total_price(),
+    2 => garden.calculate_total_price_under_bulk_discount(),
+    _ => panic!("Only part 1 or 2 is available."),
+  }
 }
 
-fn solve_part2(input: &str) -> usize {
-  let garden = GardenMap::new(input);
-  garden.total_price_part2()
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // Test with simple example
-  let simple_input = fs::read_to_string("input/day12_simple.txt")?;
-  let simple_part1 = solve_part1(&simple_input);
-  let simple_part2 = solve_part2(&simple_input);
-
-  println!("Simple input results:");
-  println!("Part 1: {simple_part1}");
-  println!("Part 2: {simple_part2}");
-
-  // Verify expected results
-  assert_eq!(simple_part1, 1930, "Part 1 simple test failed");
-  assert_eq!(simple_part2, 1206, "Part 2 simple test failed");
-
-  // Solve with full input
-  let full_input = fs::read_to_string("input/day12_full.txt")?;
-  let full_part1 = solve_part1(&full_input);
-  let full_part2 = solve_part2(&full_input);
-
-  println!("\nFull input results:");
-  println!("Part 1: {full_part1}");
-  println!("Part 2: {full_part2}");
-
+fn main() -> Result<()> {
+  print_result("input/day12_simple.txt", "Simple puzzle")?;
+  print_result("input/day12_full.txt", "Full puzzle")?;
   Ok(())
 }
