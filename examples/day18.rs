@@ -1,5 +1,6 @@
+use anyhow::Result;
 use std::collections::{HashSet, VecDeque};
-use std::fs;
+use std::{fs, panic};
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct Position {
@@ -26,11 +27,8 @@ impl Position {
   }
 }
 
-fn parse_input(filename: &str) -> Vec<Position> {
-  let content =
-    fs::read_to_string(filename).unwrap_or_else(|_| panic!("Failed to read file: {filename}"));
-
-  content
+fn parse_input(input: &str) -> Vec<Position> {
+  input
     .lines()
     .map(|line| {
       let parts: Vec<&str> = line.split(',').collect();
@@ -73,18 +71,23 @@ fn bfs_shortest_path(
   None
 }
 
-fn solve_part1(filename: &str, grid_size: i32, num_bytes: usize) -> Option<i32> {
-  let byte_positions = parse_input(filename);
+fn minimize_steps_to_exit(
+  byte_positions: &[Position],
+  grid_size: i32,
+  num_bytes: usize,
+) -> Option<i32> {
   let corrupted: HashSet<Position> = byte_positions.iter().take(num_bytes).cloned().collect();
 
   let start = Position::new(0, 0);
   let end = Position::new(grid_size - 1, grid_size - 1);
 
-  bfs_shortest_path(start, end, &corrupted, grid_size)
+  bfs_shortest_path(start, end, &corrupted, grid_size) // error defaults to -1
 }
 
-fn solve_part2(filename: &str, grid_size: i32) -> Option<Position> {
-  let byte_positions = parse_input(filename);
+fn get_first_byte_coordinate_to_prevent_exit(
+  byte_positions: &[Position],
+  grid_size: i32,
+) -> Option<Position> {
   let start = Position::new(0, 0);
   let end = Position::new(grid_size - 1, grid_size - 1);
 
@@ -113,30 +116,35 @@ fn solve_part2(filename: &str, grid_size: i32) -> Option<Position> {
   }
 }
 
-fn main() {
-  // Test with example (7x7 grid, first 12 bytes)
-  match solve_part1("input/day18_simple.txt", 7, 12) {
-    Some(steps) => println!("Example: Minimum steps needed: {steps}"),
-    None => println!("Example: No path found!"),
+fn solve(input: &str, grid_size: i32, num_bytes: usize, part: u8) -> String {
+  let byte_positions = parse_input(input);
+  match part {
+    1 => minimize_steps_to_exit(&byte_positions, grid_size, num_bytes)
+      .map_or(String::from("None"), |x| x.to_string()),
+    2 => get_first_byte_coordinate_to_prevent_exit(&byte_positions, grid_size)
+      .map_or(String::from("None"), |p| format!("{},{}", p.x, p.y)),
+    _ => panic!("Only parts 1 or 2."),
   }
+}
 
-  // Solve full problem (71x71 grid, first 1024 bytes)
-  match solve_part1("input/day18_full.txt", 71, 1024) {
-    Some(steps) => println!("Part 1: Minimum steps needed: {steps}"),
-    None => println!("Part 1: No path found!"),
-  }
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  let (grid_size, num_bytes) = match puzzle_kind {
+    "Simple puzzle" => (7, 12),
+    "Full puzzle" => (71, 1024),
+    _ => panic!("Unsupported puzzle!"),
+  };
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, grid_size, num_bytes, 1));
+  println!(
+    "Part 2 result = {}\n",
+    solve(&input, grid_size, num_bytes, 2)
+  );
+  Ok(())
+}
 
-  // Part 2: Find first blocking byte
-  match solve_part2("input/day18_simple.txt", 7) {
-    Some(pos) => println!(
-      "Example Part 2: First blocking byte at: {},{}",
-      pos.x, pos.y
-    ),
-    None => println!("Example Part 2: No blocking byte found!"),
-  }
-
-  match solve_part2("input/day18_full.txt", 71) {
-    Some(pos) => println!("Part 2: First blocking byte at: {},{}", pos.x, pos.y),
-    None => println!("Part 2: No blocking byte found!"),
-  }
+fn main() -> Result<()> {
+  print_result("input/day18_simple.txt", "Simple puzzle")?;
+  print_result("input/day18_full.txt", "Full puzzle")?;
+  Ok(())
 }
