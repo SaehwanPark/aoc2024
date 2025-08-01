@@ -1,14 +1,5 @@
 use anyhow::{Context, Result, bail};
-use clap::Parser;
-use std::{collections::HashSet, fs::read_to_string, path::PathBuf};
-
-/// AoC 2024 – Day 17 (Chronospatial Computer)
-#[derive(Parser)]
-struct Cli {
-  /// Optional path to custom puzzle input
-  #[arg()]
-  input: Option<PathBuf>,
-}
+use std::{collections::HashSet, fs};
 
 /// CPU registers
 #[derive(Clone, Copy, Debug)]
@@ -259,87 +250,37 @@ fn find_quine_value(init_b: i128, init_c: i128, prog: &[u8]) -> Result<i128> {
   Ok(best_a)
 }
 
-/// Process a single input file and return results
-fn process_input(input_path: &PathBuf) -> Result<(String, Option<i128>)> {
-  let txt =
-    read_to_string(input_path).with_context(|| format!("reading {}", input_path.display()))?;
-  let (init_regs, prog) = parse_input(&txt)?;
-
-  // Part 1
-  let part1 = exec(init_regs, &prog)?
+fn infer_program_output(regs: Regs, prog: &[u8]) -> String {
+  exec(regs, prog)
+    .unwrap()
     .into_iter()
     .map(|d| d.to_string())
     .collect::<Vec<_>>()
-    .join(",");
+    .join(",")
+}
 
-  // Part 2 - attempt to find quine value
-  let part2 = match find_quine_value(init_regs.b, init_regs.c, &prog) {
-    Ok(value) => {
-      // Verify Part 2 solution
-      let verification_regs = Regs {
-        a: value,
-        b: init_regs.b,
-        c: init_regs.c,
-      };
-      let verification_output = exec(verification_regs, &prog)?;
-      if prog != verification_output {
-        bail!("Part 2 verification failed for {}", input_path.display());
-      }
-      Some(value)
-    }
-    Err(_) => None, // This program cannot be a quine
-  };
+fn solve(input: &str, part: u8) -> String {
+  let (init_regs, prog) = parse_input(input).expect("Failed to parse input");
 
-  Ok((part1, part2))
+  match part {
+    1 => infer_program_output(init_regs, &prog),
+    2 => find_quine_value(init_regs.b, init_regs.c, &prog)
+      .map(|v| v.to_string())
+      .unwrap_or(String::from("No quine value found")),
+    _ => panic!("Only part 1 or 2 is possible."),
+  }
+}
+
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
 }
 
 fn main() -> Result<()> {
-  let cli = Cli::parse();
-
-  // If custom input provided, use it; otherwise use both standard inputs
-  if let Some(custom_input) = cli.input {
-    let (part1, part2) = process_input(&custom_input)?;
-    println!("Input: {}", custom_input.display());
-    println!("Part 1 = {part1}");
-    match part2 {
-      Some(value) => println!("Part 2 = {value}"),
-      None => println!("Part 2 = N/A (program cannot be a quine)"),
-    }
-    return Ok(());
-  }
-
-  // Process both standard inputs
-  let simple_path = PathBuf::from("input/day17_simple.txt");
-  let full_path = PathBuf::from("input/day17_full.txt");
-
-  // Try to process both inputs, but don't fail if one is missing
-  let simple_result = process_input(&simple_path);
-  let full_result = process_input(&full_path);
-
-  // Part 1 Results
-  println!("Part 1 Results:");
-  match &simple_result {
-    Ok((part1, _)) => println!("  Simple: {part1}"),
-    Err(e) => println!("  Simple: Error - {e}"),
-  }
-  match &full_result {
-    Ok((part1, _)) => println!("  Full:   {part1}"),
-    Err(e) => println!("  Full:   Error - {e}"),
-  }
-  println!();
-
-  // Part 2 Results
-  println!("Part 2 Results:");
-  match &simple_result {
-    Ok((_, Some(part2))) => println!("  Simple: {part2}"),
-    Ok((_, None)) => println!("  Simple: N/A (cannot be quine)"),
-    Err(e) => println!("  Simple: Error - {e}"),
-  }
-  match &full_result {
-    Ok((_, Some(part2))) => println!("  Full:   {part2}"),
-    Ok((_, None)) => println!("  Full:   N/A (cannot be quine)"),
-    Err(e) => println!("  Full:   Error - {e}"),
-  }
-
+  print_result("input/day17_simple.txt", "Simple puzzle")?;
+  print_result("input/day17_full.txt", "Full puzzle")?;
   Ok(())
 }
