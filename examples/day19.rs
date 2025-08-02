@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -53,19 +54,11 @@ fn count_ways(
   total_ways
 }
 
-fn solve_part1(input: &str) -> usize {
-  let lines: Vec<&str> = input.trim().split('\n').collect();
-
-  // Parse patterns from first line
-  let patterns: HashSet<String> = lines[0].split(", ").map(|s| s.to_string()).collect();
-
-  // Parse designs (skip first line and empty line)
-  let designs: Vec<&str> = lines[2..].to_vec();
-
+fn count_possible_designs(designs: &[&str], patterns: &HashSet<String>) -> usize {
   let mut count = 0;
   for design in designs {
     let mut memo = HashMap::new();
-    if can_form_design(design, &patterns, &mut memo) {
+    if can_form_design(design, patterns, &mut memo) {
       count += 1;
     }
   }
@@ -73,32 +66,38 @@ fn solve_part1(input: &str) -> usize {
   count
 }
 
-fn solve_part2(input: &str) -> usize {
-  let lines: Vec<&str> = input.trim().split('\n').collect();
-
-  // Parse patterns from first line
-  let patterns: HashSet<String> = lines[0].split(", ").map(|s| s.to_string()).collect();
-
-  // Parse designs (skip first line and empty line)
-  let designs: Vec<&str> = lines[2..].to_vec();
-
+fn count_possible_constructions_for_designs(designs: &[&str], patterns: &HashSet<String>) -> usize {
   let mut total_ways = 0;
   for design in designs {
     let mut memo = HashMap::new();
-    total_ways += count_ways(design, &patterns, &mut memo);
+    total_ways += count_ways(design, patterns, &mut memo);
   }
 
   total_ways
 }
 
-fn main() {
-  let input_simple =
-    fs::read_to_string("input/day19_simple.txt").expect("Failed to read simple input");
-  let input_full = fs::read_to_string("input/day19_full.txt").expect("Failed to read full input");
+fn solve(input: &str, part: u8) -> usize {
+  let lines: Vec<&str> = input.trim().split('\n').collect();
+  let patterns: HashSet<String> = lines[0].split(", ").map(|s| s.to_string()).collect();
+  let designs: Vec<&str> = lines[2..].to_vec();
 
-  println!("Part 1 (simple): {}", solve_part1(&input_simple));
-  println!("Part 1 (full): {}", solve_part1(&input_full));
+  match part {
+    1 => count_possible_designs(&designs, &patterns),
+    2 => count_possible_constructions_for_designs(&designs, &patterns),
+    _ => panic!("Only part 1 or 2 is possible."),
+  }
+}
 
-  println!("Part 2 (simple): {}", solve_part2(&input_simple));
-  println!("Part 2 (full): {}", solve_part2(&input_full));
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
+
+fn main() -> Result<()> {
+  print_result("input/day19_simple.txt", "Simple puzzle")?;
+  print_result("input/day19_full.txt", "Full puzzle")?;
+  Ok(())
 }
