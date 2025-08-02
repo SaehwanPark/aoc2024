@@ -2,6 +2,7 @@ use anyhow::Result;
 use std::collections::HashMap;
 use std::fs;
 
+/// Parses puzzle input and returns left and right lists separately
 fn parse_input(content: &str) -> Result<(Vec<i32>, Vec<i32>)> {
   let mut left_list = Vec::new();
   let mut right_list = Vec::new();
@@ -24,6 +25,8 @@ fn parse_input(content: &str) -> Result<(Vec<i32>, Vec<i32>)> {
   Ok((left_list, right_list))
 }
 
+/// Calculates and returns total distance as instructed
+/// Instruction: sort the two lists respectively, generate pairwise distances, sum up them
 fn calculate_total_distance(left_list: &[i32], right_list: &[i32]) -> i32 {
   let mut sorted_left = left_list.to_vec();
   let mut sorted_right = right_list.to_vec();
@@ -39,6 +42,9 @@ fn calculate_total_distance(left_list: &[i32], right_list: &[i32]) -> i32 {
     .sum()
 }
 
+/// Calculate total similarity score
+/// where similarity is defined as
+/// how many times one element in the left list shows up in the right list.
 fn calculate_similarity_score(left_list: &[i32], right_list: &[i32]) -> i32 {
   // Count occurrences of each number in the right list
   let mut right_counts: HashMap<i32, i32> = HashMap::new();
