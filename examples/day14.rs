@@ -123,7 +123,7 @@ fn minimize_robot_time_to_display_easter_egg(robots: &[Robot], width: i32, heigh
   let mut best_seconds = 0;
 
   for seconds in 0..max_seconds {
-    let variance = calculate_position_variance(&robots, width, height, seconds);
+    let variance = calculate_position_variance(robots, width, height, seconds);
 
     if variance < min_variance {
       min_variance = variance;
