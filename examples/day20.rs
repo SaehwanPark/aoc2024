@@ -1,4 +1,6 @@
+use anyhow::Result;
 use std::collections::{HashMap, VecDeque};
+use std::fs;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct Point {
@@ -150,90 +152,26 @@ fn solve_with_cheat_limit(input: &str, min_savings: usize, max_cheat_time: usize
   cheat_count
 }
 
-fn solve_part1(input: &str, min_savings: usize) -> usize {
-  solve_with_cheat_limit(input, min_savings, 2)
+fn solve(input: &str, part: u8) -> usize {
+  let min_savings = 100;
+  let cheat_limit = match part {
+    1 => 2,
+    2 => 20,
+    _ => panic!("Only part 1 or 2 is possible."),
+  };
+  solve_with_cheat_limit(input, min_savings, cheat_limit)
 }
 
-fn solve_part2(input: &str, min_savings: usize) -> usize {
-  solve_with_cheat_limit(input, min_savings, 20)
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
 }
 
-fn analyze_example_cheats(input: &str, max_cheat_time: usize, min_analysis_savings: usize) {
-  let (grid, start, end) = parse_input(input);
-  let path = find_path(&grid, start, end);
-
-  let mut pos_to_index = HashMap::new();
-  for (i, &pos) in path.iter().enumerate() {
-    pos_to_index.insert(pos, i);
-  }
-
-  let mut savings_count = HashMap::new();
-  let max_dist = max_cheat_time as isize;
-
-  for (start_idx, &cheat_start) in path.iter().enumerate() {
-    for dr in -max_dist..=max_dist {
-      for dc in -max_dist..=max_dist {
-        let manhattan_dist = dr.abs() + dc.abs();
-        if manhattan_dist == 0 || manhattan_dist > max_dist {
-          continue;
-        }
-
-        let cheat_end_row = cheat_start.row as isize + dr;
-        let cheat_end_col = cheat_start.col as isize + dc;
-
-        if cheat_end_row < 0 || cheat_end_col < 0 {
-          continue;
-        }
-
-        let cheat_end = Point::new(cheat_end_row as usize, cheat_end_col as usize);
-
-        if is_track(&grid, cheat_end) {
-          if let Some(&end_idx) = pos_to_index.get(&cheat_end) {
-            if end_idx > start_idx {
-              let normal_dist = end_idx - start_idx;
-              let cheat_dist = manhattan_dist as usize;
-
-              if normal_dist > cheat_dist {
-                let time_saved = normal_dist - cheat_dist;
-                if time_saved >= min_analysis_savings {
-                  *savings_count.entry(time_saved).or_insert(0) += 1;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  println!(
-    "Example cheat analysis (≥{min_analysis_savings} picoseconds saved, max cheat time {max_cheat_time}):"
-  );
-  let mut savings_vec: Vec<_> = savings_count.iter().collect();
-  savings_vec.sort_by_key(|&(savings, _)| savings);
-  for (&savings, &count) in savings_vec {
-    println!("  {count} cheats save {savings} picoseconds");
-  }
-}
-
-fn main() {
-  // Test with the simple example
-  let simple_input =
-    std::fs::read_to_string("input/day20_simple.txt").expect("Failed to read simple input file");
-
-  println!("=== Part 1 Analysis ===");
-  analyze_example_cheats(&simple_input, 2, 2);
-
-  println!("\n=== Part 2 Analysis ===");
-  analyze_example_cheats(&simple_input, 20, 50);
-
-  // Solve the actual problems
-  let full_input =
-    std::fs::read_to_string("input/day20_full.txt").expect("Failed to read full input file");
-
-  let part1_result = solve_part1(&full_input, 100);
-  println!("\nPart 1: {part1_result}");
-
-  let part2_result = solve_part2(&full_input, 100);
-  println!("Part 2: {part2_result}");
+fn main() -> Result<()> {
+  print_result("input/day20_simple.txt", "Simple puzzle")?;
+  print_result("input/day20_full.txt", "Full puzzle")?;
+  Ok(())
 }
