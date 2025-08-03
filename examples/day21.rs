@@ -1,4 +1,6 @@
+use anyhow::Result;
 use std::collections::HashMap;
+use std::fs;
 
 type Position = (i32, i32);
 
@@ -152,15 +154,7 @@ fn min_sequence_length(
   total_length
 }
 
-fn solve_part1(codes: &[String]) -> usize {
-  solve_with_depth(codes, 3)
-}
-
-fn solve_part2(codes: &[String]) -> usize {
-  solve_with_depth(codes, 26)
-}
-
-fn solve_with_depth(codes: &[String], depth: usize) -> usize {
+fn sum_complexities_with_depth(codes: &[&str], depth: usize) -> usize {
   let mut memo = HashMap::new();
   let mut total_complexity = 0;
 
@@ -177,32 +171,36 @@ fn solve_with_depth(codes: &[String], depth: usize) -> usize {
     let complexity = sequence_length * numeric_part;
     total_complexity += complexity;
 
-    println!(
-      "Code: {code}, Length: {sequence_length}, Numeric: {numeric_part}, Complexity: {complexity}",
-    );
+    // println!(
+    //   "Code: {code}, Length: {sequence_length}, Numeric: {numeric_part}, Complexity: {complexity}",
+    // ); // for debugging
   }
 
   total_complexity
 }
 
-fn main() {
-  // Test with simple example
-  let simple_input =
-    std::fs::read_to_string("input/day21_simple.txt").expect("Failed to read simple input file");
-  let simple_codes: Vec<String> = simple_input.lines().map(|s| s.to_string()).collect();
+fn solve(input: &str, part: u8) -> usize {
+  let depth = match part {
+    1 => 3,
+    2 => 26,
+    _ => panic!("Only part 1 or 2 is possible."),
+  };
 
-  println!("=== Simple Example ===");
-  println!("Part 1 (Simple): {}", solve_part1(&simple_codes));
-  println!("Part 2 (Simple): {}", solve_part2(&simple_codes));
+  let codes: Vec<&str> = input.lines().collect();
 
-  // Test with full input
-  if let Ok(full_input) = std::fs::read_to_string("input/day21_full.txt") {
-    let full_codes: Vec<String> = full_input.lines().map(|s| s.to_string()).collect();
+  sum_complexities_with_depth(&codes, depth)
+}
 
-    println!("\n=== Full Input ===");
-    println!("Part 1 (Full): {}", solve_part1(&full_codes));
-    println!("Part 2 (Full): {}", solve_part2(&full_codes));
-  } else {
-    println!("\nFull input file not found, skipping...");
-  }
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
+
+fn main() -> Result<()> {
+  print_result("input/day21_simple.txt", "Simple puzzle")?;
+  print_result("input/day21_full.txt", "Full puzzle")?;
+  Ok(())
 }
