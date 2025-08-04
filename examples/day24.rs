@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{HashMap, VecDeque};
 use std::fs;
 
@@ -183,21 +184,28 @@ fn calculate_z_output(wires: &HashMap<String, i32>) -> u64 {
   u64::from_str_radix(&binary_string, 2).unwrap_or(0)
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let content = fs::read_to_string("/home/saehwan/repos/aoc2024/input/day24_full.txt")?;
-  let (wires, operations) = parse_input(&content)?;
+fn solve(input: &str, part: u8) -> String {
+  let (wires, operations) = parse_input(input).expect("Parsing failed.");
+  match part {
+    1 => {
+      let final_wires = simulate_circuit(wires, operations);
+      calculate_z_output(&final_wires).to_string()
+    }
+    2 => find_wrong_wires(&operations).join(","),
+    _ => panic!("Only part 1 or 2 is possible."),
+  }
+}
 
-  // find wrong wires based on circuit analysis
-  let wrong_wires = find_wrong_wires(&operations);
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
-  // simulate the circuit
-  let final_wires = simulate_circuit(wires, operations);
-
-  // calculate final output
-  let result = calculate_z_output(&final_wires);
-
-  println!("{result}");
-  println!("{}", wrong_wires.join(","));
-
+fn main() -> Result<()> {
+  print_result("input/day24_simple.txt", "Simple puzzle")?;
+  print_result("input/day24_full.txt", "Full puzzle")?;
   Ok(())
 }
