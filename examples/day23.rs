@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -54,13 +55,6 @@ fn count_triangles_with_t(triangles: &HashSet<Vec<String>>) -> usize {
     .iter()
     .filter(|triangle| triangle.iter().any(|name| name.starts_with('t')))
     .count()
-}
-
-fn solve_part1(input_path: &str) -> Result<usize, Box<dyn std::error::Error>> {
-  let content = fs::read_to_string(input_path)?;
-  let graph = parse_input(&content);
-  let triangles = find_triangles(&graph);
-  Ok(count_triangles_with_t(&triangles))
 }
 
 fn bron_kerbosch(
@@ -122,37 +116,31 @@ fn find_maximum_clique(graph: &HashMap<String, HashSet<String>>) -> Vec<String> 
   result
 }
 
-fn solve_part2(input_path: &str) -> Result<String, Box<dyn std::error::Error>> {
-  let content = fs::read_to_string(input_path)?;
-  let graph = parse_input(&content);
-  let max_clique = find_maximum_clique(&graph);
-  Ok(max_clique.join(","))
+fn solve(input: &str, part: u8) -> String {
+  let graph = parse_input(input);
+  match part {
+    1 => {
+      let triangles = find_triangles(&graph);
+      count_triangles_with_t(&triangles).to_string()
+    }
+    2 => {
+      let max_clique = find_maximum_clique(&graph);
+      max_clique.join(",")
+    }
+    _ => panic!("Only part 1 or 2 is possible."),
+  }
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-  // part 1 - simple input
-  match solve_part1("input/day23_simple.txt") {
-    Ok(count) => println!("Part 1 Simple: {count} triangles with 't'"),
-    Err(e) => eprintln!("Error with simple input: {e}"),
-  }
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input, 1));
+  println!("Part 2 result = {}\n", solve(&input, 2));
+  Ok(())
+}
 
-  // part 1 - full input
-  match solve_part1("input/day23_full.txt") {
-    Ok(count) => println!("Part 1 Full: {count} triangles with 't'"),
-    Err(e) => eprintln!("Error with full input: {e}"),
-  }
-
-  // part 2 - simple input
-  match solve_part2("input/day23_simple.txt") {
-    Ok(password) => println!("Part 2 Simple: password = {password}"),
-    Err(e) => eprintln!("Error with simple input: {e}"),
-  }
-
-  // part 2 - full input
-  match solve_part2("input/day23_full.txt") {
-    Ok(password) => println!("Part 2 Full: password = {password}"),
-    Err(e) => eprintln!("Error with full input: {e}"),
-  }
-
+fn main() -> Result<()> {
+  print_result("input/day23_simple.txt", "Simple puzzle")?;
+  print_result("input/day23_full.txt", "Full puzzle")?;
   Ok(())
 }
