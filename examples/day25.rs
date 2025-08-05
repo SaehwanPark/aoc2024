@@ -1,3 +1,4 @@
+use anyhow::Result;
 use std::fs;
 
 fn parse_input(content: &str) -> (Vec<Vec<usize>>, Vec<Vec<usize>>, usize) {
@@ -46,7 +47,9 @@ fn fits(lock: &[usize], key: &[usize], available_space: usize) -> bool {
     .all(|(&l, &k)| l + k <= available_space)
 }
 
-fn solve_part1(locks: &[Vec<usize>], keys: &[Vec<usize>], available_space: usize) -> usize {
+/// no part 2 for day 25!
+fn solve(input: &str) -> usize {
+  let (locks, keys, available_space) = parse_input(input);
   locks
     .iter()
     .flat_map(|lock| keys.iter().map(move |key| (lock, key)))
@@ -54,16 +57,15 @@ fn solve_part1(locks: &[Vec<usize>], keys: &[Vec<usize>], available_space: usize
     .count()
 }
 
-fn main() {
-  // test with simple input
-  let content = fs::read_to_string("input/day25_simple.txt").expect("failed to read input");
-  let (locks, keys, available_space) = parse_input(&content);
-  let result = solve_part1(&locks, &keys, available_space);
-  println!("Part 1 (simple): {result}");
+fn print_result(filepath: &str, puzzle_kind: &str) -> Result<()> {
+  let input = fs::read_to_string(filepath)?;
+  println!("Input: {puzzle_kind}");
+  println!("Part 1 result = {}", solve(&input));
+  Ok(())
+}
 
-  // solve with full input
-  let content = fs::read_to_string("input/day25_full.txt").expect("failed to read input");
-  let (locks, keys, available_space) = parse_input(&content);
-  let result = solve_part1(&locks, &keys, available_space);
-  println!("Part 1 (full): {result}");
+fn main() -> Result<()> {
+  print_result("input/day25_simple.txt", "Simple puzzle")?;
+  print_result("input/day25_full.txt", "Full puzzle")?;
+  Ok(())
 }
